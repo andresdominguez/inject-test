@@ -1,8 +1,8 @@
 <idea-plugin version="2">
-  <id>com.your.company.unique.plugin.id</id>
-  <name>Plugin display name here</name>
+  <id>com.karateca.injecttest</id>
+  <name>Inject angular service in test</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="code@karateca.com">Andres Dominguez</vendor>
 
   <description><![CDATA[
       Enter short description for your plugin here.<br>
@@ -21,6 +21,7 @@
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
   <depends>com.intellij.modules.lang</depends>
+  <depends>JavaScript</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
@@ -28,6 +29,10 @@
 
   <actions>
     <!-- Add your actions here -->
+    <action id="com.karateca.injecttest.InjectTest" class="com.karateca.injecttest.InjectTestAction" text="Inject Test"
+            description="Inject service in test">
+      <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt 5"/>
+    </action>
   </actions>
 
 </idea-plugin>
