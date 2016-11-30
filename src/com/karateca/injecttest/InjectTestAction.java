@@ -26,7 +26,7 @@ public class InjectTestAction extends CommonAction {
       return;
     }
 
-    final String selectedText = getSelectedText(e);
+    final String selectedText = getSelectedText(caret);
     final String serviceNameWithUnderscore = String.format("_%s_", selectedText);
     if (selectedText == null) {
       showHint(editor, "Please select a string with the name of the service");
@@ -43,7 +43,7 @@ public class InjectTestAction extends CommonAction {
     }
 
     TextRange parameterListTextRange = parameterList.getTextRange();
-    Document document = getDocument(e);
+    Document document = editor.getDocument();
     String paramListString = document.getText(parameterListTextRange);
     final StringBuilder sb = new StringBuilder(paramListString);
 
