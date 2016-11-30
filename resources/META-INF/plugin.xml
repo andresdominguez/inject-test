@@ -33,6 +33,10 @@
             description="Inject service in test">
       <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt 5"/>
     </action>
+    <action id="com.karateca.injecttest.AddVarAction" class="com.karateca.injecttest.AddVarAction" text="Add variable"
+            description="Add a varible to the test">
+      <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt 6"/>
+    </action>
   </actions>
 
 </idea-plugin>
