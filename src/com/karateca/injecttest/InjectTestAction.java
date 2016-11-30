@@ -27,16 +27,13 @@ public class InjectTestAction extends CommonAction {
     }
 
     final String selectedText = getSelectedText(caret);
-    final String serviceNameWithUnderscore = String.format("_%s_", selectedText);
     if (selectedText == null) {
       showHint(editor, "Please select a string with the name of the service");
       return;
     }
 
-    PsiElement elementAtCaret = findElementAtCaret(e);
-    JSCallExpression injectElement = findInjectElement(elementAtCaret);
-    JSParameterList parameterList = PsiTreeUtil.findChildOfType(injectElement, JSParameterList.class);
-
+    PsiElement elementAtCaret = findElementAtCaret(editor, file);
+    JSParameterList parameterList = findInjectablesList(elementAtCaret);
     if (parameterList == null) {
       showHint(editor, "Can't find parameters in inject function");
       return;
@@ -47,7 +44,7 @@ public class InjectTestAction extends CommonAction {
     String paramListString = document.getText(parameterListTextRange);
     final StringBuilder sb = new StringBuilder(paramListString);
 
-    // Does the para list has parens?
+    // Does the param list has parens? Add them
     if (!paramListString.endsWith(")")) {
       sb.insert(0, "(");
       sb.append(")");
@@ -58,7 +55,8 @@ public class InjectTestAction extends CommonAction {
       sb.insert(sb.length() - 1, ", ");
     }
 
-    // Add the service with _name_;
+    // Surround injectable with _.
+    final String serviceNameWithUnderscore = String.format("_%s_", selectedText);
     sb.insert(sb.length() - 1, serviceNameWithUnderscore);
 
     CommandRunner.runCommand(project, () -> {
@@ -74,13 +72,15 @@ public class InjectTestAction extends CommonAction {
   }
 
   @Nullable
-  private JSCallExpression findInjectElement(PsiElement element) {
-    JSCallExpression expr = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
-    while (expr != null) {
-      if (expr.getText().startsWith("inject")) {
-        return expr;
+  private JSParameterList findInjectablesList(PsiElement element) {
+    // Start looking up until "inject(() => ..._)" is found.
+    JSCallExpression callExpression = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
+    while (callExpression != null) {
+      if (callExpression.getText().startsWith("inject")) {
+        // Now find the parameter list (the list of injectables).
+        return PsiTreeUtil.findChildOfType(callExpression, JSParameterList.class);
       }
-      expr = PsiTreeUtil.getParentOfType(expr, JSCallExpression.class);
+      callExpression = PsiTreeUtil.getParentOfType(callExpression, JSCallExpression.class);
     }
     return null;
   }

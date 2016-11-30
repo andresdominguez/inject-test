@@ -4,10 +4,10 @@ import com.intellij.lang.javascript.psi.JSBlockStatement;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
 public class AddVarAction extends CommonAction {
@@ -21,13 +21,13 @@ public class AddVarAction extends CommonAction {
       return;
     }
 
-    Document document = editor.getDocument();
-    JSBlockStatement jsBlockStatement = findDescribeBody(findElementAtCaret(e));
+    final PsiElement elementAtCaret = findElementAtCaret(editor, file);
+    JSBlockStatement jsBlockStatement = findDescribeBody(elementAtCaret);
     String selectedText = getSelectedText(caret);
 
     // Add the variable.
     TextRange jsBlockStatementTextRange = jsBlockStatement.getTextRange();
     int offset = jsBlockStatementTextRange.getStartOffset() + 2;
-    document.insertString(offset, String.format("\n  let %s;\n\n", selectedText));
+    editor.getDocument().insertString(offset, String.format("\n  let %s;\n\n", selectedText));
   }
 }

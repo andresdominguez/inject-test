@@ -4,8 +4,6 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.lang.javascript.psi.JSBlockStatement;
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
@@ -47,14 +45,7 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  PsiElement findElementAtCaret(AnActionEvent e) {
-    Editor editor = e.getData(PlatformDataKeys.EDITOR);
-    PsiFile file = e.getData(PlatformDataKeys.PSI_FILE);
-
-    if (editor == null || file == null) {
-      return null;
-    }
-
+  PsiElement findElementAtCaret(Editor editor, PsiFile file) {
     return file.findElementAt(editor.getCaretModel().getOffset());
   }
 }
