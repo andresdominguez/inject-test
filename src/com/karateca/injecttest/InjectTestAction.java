@@ -1,7 +1,9 @@
 package com.karateca.injecttest;
 
 import com.intellij.codeInsight.hint.HintManager;
+import com.intellij.lang.javascript.psi.JSBlockStatement;
 import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSParameterList;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -27,7 +29,9 @@ public class InjectTestAction extends AnAction {
       return;
     }
 
-    final String selectedText = getSelectedText(e);
+    Caret caret = e.getData(PlatformDataKeys.CARET);
+    final String selectedText = getSelectedText(caret);
+    final String serviceNameWithUnderscore = String.format("_%s_", selectedText);
     if (selectedText == null) {
       showHint(editor, "Please select a string with the name of the service");
       return;
@@ -37,14 +41,17 @@ public class InjectTestAction extends AnAction {
     JSCallExpression injectElement = findInjectElement(element);
     JSParameterList parameterList = PsiTreeUtil.findChildOfType(injectElement, JSParameterList.class);
 
+
+    JSBlockStatement jsBlockStatement = findDescribeBody(element);
+    System.out.printf("1");
     if (parameterList == null) {
       showHint(editor, "Can't find parameters in inject function");
       return;
     }
 
-    TextRange textRange = parameterList.getTextRange();
+    TextRange parameterListTextRange = parameterList.getTextRange();
     Document document = editor.getDocument();
-    String paramListString = document.getText(textRange);
+    String paramListString = document.getText(parameterListTextRange);
     final StringBuilder sb = new StringBuilder(paramListString);
 
     // Does the para list has parens?
@@ -59,16 +66,45 @@ public class InjectTestAction extends AnAction {
     }
 
     // Add the service with _name_;
-    sb.insert(sb.length() - 1, String.format("_%s_", selectedText));
+    sb.insert(sb.length() - 1, serviceNameWithUnderscore);
 
     CommandRunner.runCommand(project, () -> {
-      document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(), sb.toString());
+      // Assign the variable <selection> = _<selection>_;
+      document.replaceString(
+          caret.getSelectionStart(),
+          caret.getSelectionEnd(),
+          String.format("%s = %s;", selectedText, serviceNameWithUnderscore)
+      );
+
+      // Add the dependency parameter list.
+      document.replaceString(parameterListTextRange.getStartOffset(), parameterListTextRange.getEndOffset(), sb.toString());
+
+      // Add the variable.
+      TextRange jsBlockStatementTextRange = jsBlockStatement.getTextRange();
+      int offset = jsBlockStatementTextRange.getStartOffset() + 2;
+      document.insertString(offset, String.format("\n  let %s;\n\n", selectedText));
+
     });
   }
 
+  private JSBlockStatement findDescribeBody(PsiElement element) {
+    // Find the top level describe.
+    JSExpressionStatement describeExpression = null;
+    JSExpressionStatement parent = PsiTreeUtil.getParentOfType(element, JSExpressionStatement.class);
+    while (parent != null) {
+      if (parent.getText().startsWith("describe")) {
+        describeExpression = parent;
+        break;
+      }
+      parent = PsiTreeUtil.getParentOfType(parent, JSExpressionStatement.class);
+    }
+
+    // Try to find the body of describe function.
+    return PsiTreeUtil.findChildOfType(describeExpression, JSBlockStatement.class);
+  }
+
   @Nullable
-  private String getSelectedText(AnActionEvent e) {
-    Caret caret = e.getData(PlatformDataKeys.CARET);
+  private String getSelectedText(Caret caret) {
     if (caret == null) {
       return null;
     }
