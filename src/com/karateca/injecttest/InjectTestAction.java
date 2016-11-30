@@ -1,11 +1,8 @@
 package com.karateca.injecttest;
 
-import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.lang.javascript.psi.JSBlockStatement;
 import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSParameterList;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Caret;
@@ -18,7 +15,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
-public class InjectTestAction extends AnAction {
+public class InjectTestAction extends CommonAction {
 
   @Override
   public void actionPerformed(AnActionEvent e) {
@@ -43,7 +40,7 @@ public class InjectTestAction extends AnAction {
 
 
     JSBlockStatement jsBlockStatement = findDescribeBody(element);
-    System.out.printf("1");
+
     if (parameterList == null) {
       showHint(editor, "Can't find parameters in inject function");
       return;
@@ -85,38 +82,6 @@ public class InjectTestAction extends AnAction {
       document.insertString(offset, String.format("\n  let %s;\n\n", selectedText));
 
     });
-  }
-
-  private JSBlockStatement findDescribeBody(PsiElement element) {
-    // Find the top level describe.
-    JSExpressionStatement describeExpression = null;
-    JSExpressionStatement parent = PsiTreeUtil.getParentOfType(element, JSExpressionStatement.class);
-    while (parent != null) {
-      if (parent.getText().startsWith("describe")) {
-        describeExpression = parent;
-        break;
-      }
-      parent = PsiTreeUtil.getParentOfType(parent, JSExpressionStatement.class);
-    }
-
-    // Try to find the body of describe function.
-    return PsiTreeUtil.findChildOfType(describeExpression, JSBlockStatement.class);
-  }
-
-  @Nullable
-  private String getSelectedText(Caret caret) {
-    if (caret == null) {
-      return null;
-    }
-
-    if (caret.getSelectedText() == null || caret.getSelectedText().trim().length() == 0) {
-      return null;
-    }
-    return caret.getSelectedText().trim();
-  }
-
-  private void showHint(Editor editor, String s) {
-    HintManager.getInstance().showErrorHint(editor, s);
   }
 
   @Nullable
