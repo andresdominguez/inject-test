@@ -4,15 +4,21 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.lang.javascript.psi.JSBlockStatement;
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract class CommonAction extends AnAction {
   @Nullable
-  String getSelectedText(Caret caret) {
+  String getSelectedText(AnActionEvent e) {
+    Caret caret = e.getData(PlatformDataKeys.CARET);
     if (caret == null) {
       return null;
     }
@@ -41,5 +47,22 @@ abstract class CommonAction extends AnAction {
 
     // Try to find the body of describe function.
     return PsiTreeUtil.findChildOfType(describeExpression, JSBlockStatement.class);
+  }
+
+  @NotNull
+  Document getDocument(AnActionEvent e) {
+    return e.getData(PlatformDataKeys.EDITOR).getDocument();
+  }
+
+  @Nullable
+  PsiElement findElementAtCaret(AnActionEvent e) {
+    Editor editor = e.getData(PlatformDataKeys.EDITOR);
+    PsiFile file = e.getData(PlatformDataKeys.PSI_FILE);
+
+    if (editor == null || file == null) {
+      return null;
+    }
+
+    return file.findElementAt(editor.getCaretModel().getOffset());
   }
 }

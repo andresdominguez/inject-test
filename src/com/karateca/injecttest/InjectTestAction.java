@@ -1,6 +1,5 @@
 package com.karateca.injecttest;
 
-import com.intellij.lang.javascript.psi.JSBlockStatement;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSParameterList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -22,24 +21,21 @@ public class InjectTestAction extends CommonAction {
     Project project = getEventProject(e);
     Editor editor = e.getData(PlatformDataKeys.EDITOR);
     PsiFile file = e.getData(PlatformDataKeys.PSI_FILE);
-    if (project == null || editor == null || file == null) {
+    Caret caret = e.getData(PlatformDataKeys.CARET);
+    if (project == null || editor == null || file == null || caret == null) {
       return;
     }
 
-    Caret caret = e.getData(PlatformDataKeys.CARET);
-    final String selectedText = getSelectedText(caret);
+    final String selectedText = getSelectedText(e);
     final String serviceNameWithUnderscore = String.format("_%s_", selectedText);
     if (selectedText == null) {
       showHint(editor, "Please select a string with the name of the service");
       return;
     }
 
-    PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-    JSCallExpression injectElement = findInjectElement(element);
+    PsiElement elementAtCaret = findElementAtCaret(e);
+    JSCallExpression injectElement = findInjectElement(elementAtCaret);
     JSParameterList parameterList = PsiTreeUtil.findChildOfType(injectElement, JSParameterList.class);
-
-
-    JSBlockStatement jsBlockStatement = findDescribeBody(element);
 
     if (parameterList == null) {
       showHint(editor, "Can't find parameters in inject function");
@@ -47,7 +43,7 @@ public class InjectTestAction extends CommonAction {
     }
 
     TextRange parameterListTextRange = parameterList.getTextRange();
-    Document document = editor.getDocument();
+    Document document = getDocument(e);
     String paramListString = document.getText(parameterListTextRange);
     final StringBuilder sb = new StringBuilder(paramListString);
 
@@ -67,20 +63,13 @@ public class InjectTestAction extends CommonAction {
 
     CommandRunner.runCommand(project, () -> {
       // Assign the variable <selection> = _<selection>_;
-      document.replaceString(
-          caret.getSelectionStart(),
-          caret.getSelectionEnd(),
-          String.format("%s = %s;", selectedText, serviceNameWithUnderscore)
-      );
+      document.insertString(caret.getSelectionEnd(), String.format(" = %s;", serviceNameWithUnderscore));
 
       // Add the dependency parameter list.
       document.replaceString(parameterListTextRange.getStartOffset(), parameterListTextRange.getEndOffset(), sb.toString());
 
       // Add the variable.
-      TextRange jsBlockStatementTextRange = jsBlockStatement.getTextRange();
-      int offset = jsBlockStatementTextRange.getStartOffset() + 2;
-      document.insertString(offset, String.format("\n  let %s;\n\n", selectedText));
-
+      new AddVarAction().actionPerformed(e);
     });
   }
 
