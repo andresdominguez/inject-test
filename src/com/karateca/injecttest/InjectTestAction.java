@@ -1,6 +1,7 @@
 package com.karateca.injecttest;
 
-import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSBlockStatement;
+import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSParameterList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -12,7 +13,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Nullable;
 
 public class InjectTestAction extends CommonAction {
 
@@ -32,8 +32,7 @@ public class InjectTestAction extends CommonAction {
       return;
     }
 
-    PsiElement elementAtCaret = findElementAtCaret(editor, file);
-    JSParameterList parameterList = findInjectablesList(elementAtCaret);
+    JSParameterList parameterList = findInjectablesList(file);
     if (parameterList == null) {
       showHint(editor, "Can't find parameters in inject function");
       return;
@@ -69,19 +68,5 @@ public class InjectTestAction extends CommonAction {
       // Add the variable.
       new AddVarAction().actionPerformed(e);
     });
-  }
-
-  @Nullable
-  private JSParameterList findInjectablesList(PsiElement element) {
-    // Start looking up until "inject(() => ..._)" is found.
-    JSCallExpression callExpression = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
-    while (callExpression != null) {
-      if (callExpression.getText().startsWith("inject")) {
-        // Now find the parameter list (the list of injectables).
-        return PsiTreeUtil.findChildOfType(callExpression, JSParameterList.class);
-      }
-      callExpression = PsiTreeUtil.getParentOfType(callExpression, JSCallExpression.class);
-    }
-    return null;
   }
 }

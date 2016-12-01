@@ -1,8 +1,8 @@
 package com.karateca.injecttest;
 
 import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.lang.javascript.psi.JSBlockStatement;
-import com.intellij.lang.javascript.psi.JSExpressionStatement;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSParameterList;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -28,24 +28,21 @@ abstract class CommonAction extends AnAction {
     HintManager.getInstance().showErrorHint(editor, s);
   }
 
-  JSBlockStatement findDescribeBody(PsiElement element) {
-    // Find the top level describe.
-    JSExpressionStatement describeExpression = null;
-    JSExpressionStatement parent = PsiTreeUtil.getParentOfType(element, JSExpressionStatement.class);
-    while (parent != null) {
-      if (parent.getText().startsWith("describe")) {
-        describeExpression = parent;
-        break;
-      }
-      parent = PsiTreeUtil.getParentOfType(parent, JSExpressionStatement.class);
-    }
-
-    // Try to find the body of describe function.
-    return PsiTreeUtil.findChildOfType(describeExpression, JSBlockStatement.class);
+  @Nullable
+  <T extends PsiElement> T findChildrenByTypeWithText(PsiElement element, Class<? extends T> aClass, String text) {
+    return PsiTreeUtil.findChildrenOfType(element, aClass)
+        .stream()
+        .filter(o -> o.getText().startsWith(text))
+        .findFirst()
+        .orElse(null);
   }
 
   @Nullable
-  PsiElement findElementAtCaret(Editor editor, PsiFile file) {
-    return file.findElementAt(editor.getCaretModel().getOffset());
+  JSParameterList findInjectablesList(PsiFile file) {
+    // Look for "inject(() => ..._)".
+    JSCallExpression inject = findChildrenByTypeWithText(file, JSCallExpression.class, "inject");
+
+    // Now find the parameter list (the list of injectables).
+    return PsiTreeUtil.findChildOfType(inject, JSParameterList.class);
   }
 }
