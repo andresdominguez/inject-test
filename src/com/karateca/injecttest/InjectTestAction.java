@@ -54,7 +54,7 @@ public class InjectTestAction extends CommonAction {
     final String serviceNameWithUnderscore = String.format("_%s_", selectedText);
     sb.insert(sb.length() - 1, serviceNameWithUnderscore);
 
-    CommandRunner.runCommand(project, () -> {
+    runCommand(project, () -> {
       // Assign the variable <selection> = _<selection>_;
       document.insertString(caret.getSelectionEnd(), String.format(" = %s;", serviceNameWithUnderscore));
 

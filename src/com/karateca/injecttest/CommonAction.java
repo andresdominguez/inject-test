@@ -4,14 +4,21 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSParameterList;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
 abstract class CommonAction extends AnAction {
+  void runCommand(Project project, final Runnable runnable) {
+    CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(runnable), "inject test", null);
+  }
+
   @Nullable
   String getSelectedText(Caret caret) {
     if (caret == null) {
