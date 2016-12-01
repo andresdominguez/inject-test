@@ -1,7 +1,5 @@
 package com.karateca.injecttest;
 
-import com.intellij.lang.javascript.psi.JSBlockStatement;
-import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSParameterList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -10,9 +8,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 
 public class InjectTestAction extends CommonAction {
 
