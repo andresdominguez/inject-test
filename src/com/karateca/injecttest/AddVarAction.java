@@ -49,7 +49,7 @@ public class AddVarAction extends CommonAction {
       textToInsert = String.format("\n  let %s;\n", selectedText);
     }
 
-    editor.getDocument().insertString(offset, textToInsert);
+    runCommand(project, () -> editor.getDocument().insertString(offset, textToInsert));
   }
 
   private Optional<JSVarStatement> findVarWithLetInBody(JSBlockStatement jsBlockStatement, int endOffset) {
