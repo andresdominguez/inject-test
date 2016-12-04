@@ -1,7 +1,5 @@
-describe('My suite', () => {
-
-  beforeEach(inject(() => {
+describe('My suite', function () {
+  beforeEach(inject(function () {
     <selection>someService</selection>
   }));
-
 });

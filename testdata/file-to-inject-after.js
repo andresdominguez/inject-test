@@ -1,7 +1,7 @@
-describe('My suite', () => {
+describe('My suite', function () {
 
-  beforeEach(inject(() => {
-    <selection>someService</selection>fsd
+  let someService;
+  beforeEach(inject(function (_someService_) {
+    someService = _someService_;
   }));
-
 });
