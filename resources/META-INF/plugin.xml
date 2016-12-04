@@ -5,13 +5,21 @@
   <vendor email="code@karateca.com">Andres Dominguez</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+    Adds an injectable parameter and a variable to an Angular 1.x JavaScript Jasmine unit test.
+    <p>
+      Select the name of the service or injectable you want to add to your unit test and the plugin will perform the
+      following actions:
+      <ul>
+        <li>Adds a parameter to the inject() function callback</li>
+        <li>Assigns the name of the injectable the current selection</li>
+        <li>Creates a variable at the top-level descrbe to assign the injectable</li>
+      </ul>
+    </p>
     ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+    Add change notes here.<br>
+    <em>most HTML tags may be used</em>
     ]]>
   </change-notes>
 
@@ -29,12 +37,13 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="com.karateca.injecttest.InjectTestAction" class="com.karateca.injecttest.InjectTestAction" text="Inject Test"
+    <action id="com.karateca.injecttest.InjectTestAction" class="com.karateca.injecttest.InjectTestAction"
+            text="Inject Test"
             description="Inject service in test">
       <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt 5"/>
     </action>
     <action id="com.karateca.injecttest.AddVarAction" class="com.karateca.injecttest.AddVarAction" text="Add variable"
-            description="Add a varible to the test">
+            description="Add a variable to the test">
       <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt 6"/>
     </action>
   </actions>
