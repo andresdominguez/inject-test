@@ -19,5 +19,5 @@ and the plugin will perform the following actions:
 * Go to Settings / Plugins / Install plugin from disk...
 * Restart
 
- ![installation animation](installJar.gif)
+![installation animation](installJar.gif)
  
