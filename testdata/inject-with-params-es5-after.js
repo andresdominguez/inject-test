@@ -1,7 +1,9 @@
 describe('My suite', function () {
 
-  let someService;
+  let theOne, someService;
+
   beforeEach(inject(function (one, _someService_) {
+    theOne = one;
     someService = _someService_;
   }));
 });
