@@ -39,12 +39,13 @@
   <actions>
     <!-- Add your actions here -->
     <action id="com.karateca.injecttest.InjectTestAction" class="com.karateca.injecttest.InjectTestAction"
-            text="Inject Test"
-            description="Inject service in test">
+            text="Inject selection in test"
+            description="Injects service or injectable in test based on current selection">
       <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt 5"/>
     </action>
-    <action id="com.karateca.injecttest.AddVarAction" class="com.karateca.injecttest.AddVarAction" text="Add variable"
-            description="Add a variable to the test">
+    <action id="com.karateca.injecttest.AddVarAction" class="com.karateca.injecttest.AddVarAction"
+            text="Add variable from selection"
+            description="Adds variable to the test based on current selection">
       <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt 6"/>
     </action>
   </actions>
