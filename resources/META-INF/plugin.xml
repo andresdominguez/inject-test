@@ -29,7 +29,7 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="com.karateca.injecttest.InjectTest" class="com.karateca.injecttest.InjectTestAction" text="Inject Test"
+    <action id="com.karateca.injecttest.InjectTestAction" class="com.karateca.injecttest.InjectTestAction" text="Inject Test"
             description="Inject service in test">
       <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt 5"/>
     </action>
