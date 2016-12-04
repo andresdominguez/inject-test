@@ -8,7 +8,7 @@ public class InjectTestActionTest extends LightCodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return new File("testdata/").getPath();
+    return "testdata";
   }
 
   public void testInjectsService() {
