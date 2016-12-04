@@ -25,6 +25,12 @@ public class InjectTestActionTest extends LightCodeInsightFixtureTestCase {
     runActionTest(beforeAndAfter, beforeAndAfter);
   }
 
+  public void testIgnoresFileWithoutinjectFunction() {
+    // No inject() changes nothing.
+    String beforeAndAfter = "no-inject-function.js";
+    runActionTest(beforeAndAfter, beforeAndAfter);
+  }
+
   private void runActionTest(String fileBefore, String fileAfter) {
     myFixture.configureByFiles(fileBefore);
 
