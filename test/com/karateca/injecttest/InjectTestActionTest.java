@@ -9,28 +9,27 @@ public class InjectTestActionTest extends LightCodeInsightFixtureTestCase {
     return "testdata";
   }
 
-  private void whenYouRunTheAction() {
-    myFixture.performEditorAction("com.karateca.injecttest.InjectTestAction");
-  }
-
   public void testInjectsES5NoParams() {
-    myFixture.configureByFiles("inject-no-params-es5-before.js");
-
-    whenYouRunTheAction();
-
-    myFixture.checkResultByFile(
-        "inject-no-params-es5-before.js",
-        "inject-no-params-es5-after.js", false);
+    // inject() has no params.
+    runActionTest("inject-no-params-es5-before.js", "inject-no-params-es5-after.js");
   }
 
   public void testInjectES5WithParams() {
-    // Given that inject() has params.
-    myFixture.configureByFile("inject-with-params-es5-before.js");
+    // inject() has params.
+    runActionTest("inject-with-params-es5-before.js", "inject-with-params-es5-after.js");
+  }
 
-    whenYouRunTheAction();
+  public void testIgnoresWithoutSelection() {
+    // No selection changes nothing.
+    String beforeAndAfter = "inject-with-params-es5-after.js";
+    runActionTest(beforeAndAfter, beforeAndAfter);
+  }
 
-    myFixture.checkResultByFile(
-        "inject-with-params-es5-before.js",
-        "inject-with-params-es5-after.js", false);
+  private void runActionTest(String fileBefore, String fileAfter) {
+    myFixture.configureByFiles(fileBefore);
+
+    myFixture.performEditorAction("com.karateca.injecttest.InjectTestAction");
+
+    myFixture.checkResultByFile(fileBefore, fileAfter, false);
   }
 }
