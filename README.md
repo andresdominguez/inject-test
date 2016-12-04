@@ -1,5 +1,5 @@
 # inject-test
-Idea plugin to inject services for angular jasmine tests.
+IntelliJ / WebStorm / PhpStorm plugin to inject services for angular jasmine tests.
 
 Adds an injectable parameter and a variable to an Angular 1.x JavaScript 
 Jasmine unit test.
@@ -12,3 +12,12 @@ and the plugin will perform the following actions:
 * Creates a variable at the top-level descrbe to assign the injectable  
 
 ![plugin animation](injectTestAnimation.gif)
+
+## Installation instructions
+
+* Download inject-test.jar
+* Go to Settings / Plugins / Install plugin from disk...
+* Restart
+
+ ![installation animation](installJar.gif)
+ 
