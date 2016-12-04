@@ -12,12 +12,12 @@ public class InjectTestActionTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testInjectsService() {
-    myFixture.configureByFiles("file-to-inject-before.js");
+    myFixture.configureByFiles("inject-no-params-es5-before.js");
 
     myFixture.performEditorAction("com.karateca.injecttest.InjectTestAction");
 
     myFixture.checkResultByFile(
-        "file-to-inject-before.js",
-        "file-to-inject-after.js", false);
+        "inject-no-params-es5-before.js",
+        "inject-no-params-es5-after.js", false);
   }
 }
